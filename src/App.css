@@ -28,21 +28,41 @@ body {
 }
 
 .display {
-  padding: 24px 28px 16px;
+  padding: 16px 20px 12px;
   text-align: right;
-  min-height: 120px;
+  min-height: 110px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   background: #1c1c1e;
 }
 
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
 .op-indicator {
   font-size: 1rem;
   color: #ff9f0a;
-  margin-bottom: 4px;
   min-height: 20px;
 }
+
+.history-toggle {
+  background: rgba(255,255,255,0.08);
+  border: none;
+  border-radius: 20px;
+  color: #aaa;
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.2s, color 0.2s;
+}
+
+.history-toggle:hover { background: rgba(255,255,255,0.15); color: #fff; }
 
 .number {
   font-size: 3.2rem;
@@ -51,8 +71,63 @@ body {
   letter-spacing: -2px;
   line-height: 1;
   word-break: break-all;
-  transition: font-size 0.1s;
 }
+
+.history-panel {
+  background: #111;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  max-height: 200px;
+  overflow-y: auto;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px 6px;
+  font-size: 0.75rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.clear-history {
+  background: none;
+  border: none;
+  color: #ff9f0a;
+  font-size: 0.72rem;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+
+.clear-history:hover { opacity: 0.7; }
+
+.history-empty {
+  padding: 16px;
+  text-align: center;
+  color: #444;
+  font-size: 0.85rem;
+}
+
+.history-list { list-style: none; padding: 0 0 8px; }
+
+.history-item {
+  padding: 7px 16px;
+  font-size: 0.88rem;
+  color: #bbb;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  text-align: right;
+  transition: background 0.15s;
+}
+
+.history-item:hover { background: rgba(255,255,255,0.04); }
 
 .buttons { padding: 8px 12px 16px; display: flex; flex-direction: column; gap: 10px; }
 

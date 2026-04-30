@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./App.css";
 
+const FILTERS = ["All", "Active", "Completed"];
+
 const buttons = [
   ["C", "±", "%", "÷"],
   ["7", "8", "9", "×"],
@@ -14,6 +16,8 @@ export default function App() {
   const [prev, setPrev] = useState(null);
   const [op, setOp] = useState(null);
   const [fresh, setFresh] = useState(true);
+  const [history, setHistory] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
 
   const calculate = (a, b, operator) => {
     switch (operator) {
@@ -41,6 +45,8 @@ export default function App() {
     if (val === "=") {
       if (op && prev !== null) {
         const result = calculate(prev, parseFloat(display), op);
+        const entry = `${prev} ${op} ${display} = ${parseFloat(result.toFixed(10))}`;
+        setHistory((h) => [entry, ...h].slice(0, 20));
         setDisplay(String(parseFloat(result.toFixed(10))));
         setPrev(null); setOp(null); setFresh(true);
       }
@@ -61,9 +67,40 @@ export default function App() {
     <div className="app">
       <div className="calc">
         <div className="display">
-          <div className="op-indicator">{op || ""}</div>
+          <div className="top-bar">
+            <div className="op-indicator">{op || ""}</div>
+            <button
+              className="history-toggle"
+              onClick={() => setShowHistory((s) => !s)}
+            >
+              {showHistory ? "✕ Close" : "⏱ History"}
+            </button>
+          </div>
           <div className="number">{display}</div>
         </div>
+
+        {showHistory && (
+          <div className="history-panel">
+            <div className="history-header">
+              <span>Recent Calculations</span>
+              {history.length > 0 && (
+                <button className="clear-history" onClick={() => setHistory([])}>
+                  Clear
+                </button>
+              )}
+            </div>
+            {history.length === 0 ? (
+              <div className="history-empty">No calculations yet</div>
+            ) : (
+              <ul className="history-list">
+                {history.map((h, i) => (
+                  <li key={i} className="history-item">{h}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
         <div className="buttons">
           {buttons.map((row, i) => (
             <div key={i} className="row">
