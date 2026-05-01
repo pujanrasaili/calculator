@@ -1,16 +1,59 @@
-# React + Vite
+# 🧮 Calculator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A sleek, feature-rich calculator app built with React + Vite.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- ✅ Basic arithmetic — add, subtract, multiply, divide
+- 🔬 Scientific mode — sin, cos, tan, log, ln, √, x², xʸ, π, e
+- 🎨 3 Themes — Dark, Light, and Neon
+- ⏱ Calculation History — see your last 20 calculations
+- ⌨️ Keyboard Support — type numbers and operators directly
+- 📱 Clean responsive UI inspired by iOS calculator
 
-## React Compiler
+## 🛠 Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- [React](https://react.dev/) — UI library
+- [Vite](https://vitejs.dev/) — lightning-fast bundler
+- CSS Variables — for seamless theme switching
 
-## Expanding the ESLint configuration
+## 🚀 Live Demo
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+👉 [calculator-five-omega-98.vercel.app](https://calculator-five-omega-98.vercel.app)
+
+## 📦 Getting Started
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+## ⌨️ Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| 0-9 | Numbers |
+| + - * / | Operators |
+| Enter | Equals |
+| Escape | Clear |
+| . | Decimal |
+| % | Percentage |
+
+## 📁 Project Structure
+calculator/
+├── src/
+│   ├── App.jsx      # Main component
+│   ├── App.css      # Themes & styles
+│   └── main.jsx     # Entry point
+├── index.html
+└── package.json
+
+## 📄 License
+
+MIT
