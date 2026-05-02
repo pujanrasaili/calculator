@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import "./App.css";
 
 const basicButtons = [
-  ["C", "±", "%", "÷"],
+  ["C", "⌫", "%", "÷"],
   ["7", "8", "9", "×"],
   ["4", "5", "6", "−"],
   ["1", "2", "3", "+"],
-  ["0", ".", "="],
+  ["±", "0", ".", "="],
 ];
 
 const sciButtons = [
@@ -26,6 +26,7 @@ export default function App() {
   const [showHistory, setShowHistory] = useState(false);
   const [showSci, setShowSci] = useState(false);
   const [theme, setTheme] = useState("dark");
+  const [expression, setExpression] = useState("");
 
   const calculate = (a, b, operator) => {
     switch (operator) {
@@ -39,24 +40,63 @@ export default function App() {
   };
 
   const handleBtn = (val) => {
-    if (val === "C") { setDisplay("0"); setPrev(null); setOp(null); setFresh(true); return; }
+    if (val === "C") {
+      setDisplay("0"); setPrev(null); setOp(null); setFresh(true); setExpression(""); return;
+    }
+    if (val === "⌫") {
+      if (fresh) return;
+      setDisplay((d) => d.length > 1 ? d.slice(0, -1) : "0");
+      return;
+    }
     if (val === "±") { setDisplay((d) => String(parseFloat(d) * -1)); return; }
     if (val === "%") { setDisplay((d) => String(parseFloat(d) / 100)); return; }
-    if (val === "π") { setDisplay(String(Math.PI)); setFresh(true); return; }
-    if (val === "e") { setDisplay(String(Math.E)); setFresh(true); return; }
-    if (val === "x²") { setDisplay((d) => String(parseFloat(d) ** 2)); setFresh(true); return; }
-    if (val === "√") { setDisplay((d) => String(Math.sqrt(parseFloat(d)))); setFresh(true); return; }
-    if (val === "sin") { setDisplay((d) => String(parseFloat(Math.sin(parseFloat(d) * Math.PI / 180).toFixed(10)))); setFresh(true); return; }
-    if (val === "cos") { setDisplay((d) => String(parseFloat(Math.cos(parseFloat(d) * Math.PI / 180).toFixed(10)))); setFresh(true); return; }
-    if (val === "tan") { setDisplay((d) => String(parseFloat(Math.tan(parseFloat(d) * Math.PI / 180).toFixed(10)))); setFresh(true); return; }
-    if (val === "log") { setDisplay((d) => String(parseFloat(Math.log10(parseFloat(d)).toFixed(10)))); setFresh(true); return; }
-    if (val === "ln") { setDisplay((d) => String(parseFloat(Math.log(parseFloat(d)).toFixed(10)))); setFresh(true); return; }
-    if (["÷", "×", "−", "+", "xʸ"].includes(val)) { setPrev(parseFloat(display)); setOp(val); setFresh(true); return; }
+    if (val === "π") { setDisplay(String(Math.PI.toFixed(8))); setFresh(true); return; }
+    if (val === "e") { setDisplay(String(Math.E.toFixed(8))); setFresh(true); return; }
+    if (val === "x²") {
+      const r = parseFloat(display) ** 2;
+      setHistory((h) => [`${display}² = ${r}`, ...h].slice(0, 20));
+      setDisplay(String(r)); setFresh(true); return;
+    }
+    if (val === "√") {
+      const r = parseFloat(Math.sqrt(parseFloat(display)).toFixed(10));
+      setHistory((h) => [`√${display} = ${r}`, ...h].slice(0, 20));
+      setDisplay(String(r)); setFresh(true); return;
+    }
+    if (val === "sin") {
+      const r = parseFloat(Math.sin(parseFloat(display) * Math.PI / 180).toFixed(10));
+      setHistory((h) => [`sin(${display}°) = ${r}`, ...h].slice(0, 20));
+      setDisplay(String(r)); setFresh(true); return;
+    }
+    if (val === "cos") {
+      const r = parseFloat(Math.cos(parseFloat(display) * Math.PI / 180).toFixed(10));
+      setHistory((h) => [`cos(${display}°) = ${r}`, ...h].slice(0, 20));
+      setDisplay(String(r)); setFresh(true); return;
+    }
+    if (val === "tan") {
+      const r = parseFloat(Math.tan(parseFloat(display) * Math.PI / 180).toFixed(10));
+      setHistory((h) => [`tan(${display}°) = ${r}`, ...h].slice(0, 20));
+      setDisplay(String(r)); setFresh(true); return;
+    }
+    if (val === "log") {
+      const r = parseFloat(Math.log10(parseFloat(display)).toFixed(10));
+      setHistory((h) => [`log(${display}) = ${r}`, ...h].slice(0, 20));
+      setDisplay(String(r)); setFresh(true); return;
+    }
+    if (val === "ln") {
+      const r = parseFloat(Math.log(parseFloat(display)).toFixed(10));
+      setHistory((h) => [`ln(${display}) = ${r}`, ...h].slice(0, 20));
+      setDisplay(String(r)); setFresh(true); return;
+    }
+    if (["÷", "×", "−", "+", "xʸ"].includes(val)) {
+      setExpression(`${display} ${val}`);
+      setPrev(parseFloat(display)); setOp(val); setFresh(true); return;
+    }
     if (val === "=") {
       if (op && prev !== null) {
         const result = calculate(prev, parseFloat(display), op);
         const entry = `${prev} ${op} ${display} = ${parseFloat(result.toFixed(10))}`;
         setHistory((h) => [entry, ...h].slice(0, 20));
+        setExpression("");
         setDisplay(String(parseFloat(result.toFixed(10))));
         setPrev(null); setOp(null); setFresh(true);
       }
@@ -71,11 +111,12 @@ export default function App() {
     else setDisplay((d) => (d === "0" ? val : d + val));
   };
 
-  // Keyboard support
   useEffect(() => {
     const keyMap = {
-      "0":"0","1":"1","2":"2","3":"3","4":"4","5":"5","6":"6","7":"7","8":"8","9":"9",
-      ".":".", "+":"+", "-":"−", "*":"×", "/":"÷", "Enter":"=", "Escape":"C", "Backspace":"C", "%":"%"
+      "0":"0","1":"1","2":"2","3":"3","4":"4","5":"5",
+      "6":"6","7":"7","8":"8","9":"9",
+      ".":".", "+":"+", "-":"−", "*":"×", "/":"÷",
+      "Enter":"=", "Escape":"C", "Backspace":"⌫", "%":"%"
     };
     const handler = (e) => { if (keyMap[e.key]) handleBtn(keyMap[e.key]); };
     window.addEventListener("keydown", handler);
@@ -91,14 +132,14 @@ export default function App() {
         <div className="display">
           <div className="top-bar">
             <div className="left-controls">
-              <button className="ctrl-btn" onClick={nextTheme}>🎨</button>
-              <button className={`ctrl-btn ${showSci ? "active" : ""}`} onClick={() => setShowSci(s => !s)}>sci</button>
+              <button className="ctrl-btn" onClick={nextTheme} title="Switch theme">🎨</button>
+              <button className={`ctrl-btn ${showSci ? "active" : ""}`} onClick={() => setShowSci(s => !s)} title="Scientific mode">sci</button>
             </div>
             <div className="right-controls">
-              <div className="op-indicator">{op || ""}</div>
-              <button className={`ctrl-btn ${showHistory ? "active" : ""}`} onClick={() => setShowHistory(s => !s)}>⏱</button>
+              <button className={`ctrl-btn ${showHistory ? "active" : ""}`} onClick={() => setShowHistory(s => !s)} title="History">⏱</button>
             </div>
           </div>
+          <div className="expression">{expression || " "}</div>
           <div className="number">{display}</div>
         </div>
 
@@ -110,8 +151,7 @@ export default function App() {
             </div>
             {history.length === 0
               ? <div className="history-empty">No calculations yet</div>
-              : <ul className="history-list">{history.map((h, i) => <li key={i} className="history-item">{h}</li>)}</ul>
-            }
+              : <ul className="history-list">{history.map((h, i) => <li key={i} className="history-item">{h}</li>)}</ul>}
           </div>
         )}
 
@@ -133,15 +173,20 @@ export default function App() {
               {row.map((btn) => (
                 <button
                   key={btn}
-                  className={`btn ${btn === "0" ? "zero" : ""} ${isOp(btn) ? "operator" : ""} ${btn === "=" ? "equals" : ""} ${["C","±","%"].includes(btn) ? "top" : ""}`}
+                  className={`btn
+                    ${btn === "0" ? "zero" : ""}
+                    ${isOp(btn) ? "operator" : ""}
+                    ${btn === "=" ? "equals" : ""}
+                    ${["C", "⌫", "%"].includes(btn) ? "top" : ""}
+                    ${btn === "⌫" ? "backspace" : ""}
+                  `}
                   onClick={() => handleBtn(btn)}
                 >{btn}</button>
               ))}
             </div>
           ))}
         </div>
-
-        <div className="keyboard-hint">⌨️ Keyboard supported</div>
+        <div className="keyboard-hint">⌨️ Keyboard & Backspace supported</div>
       </div>
     </div>
   );

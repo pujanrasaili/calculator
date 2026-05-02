@@ -98,3 +98,14 @@ body { min-height: 100vh; font-family: 'Inter', sans-serif; }
   text-align: center; padding: 6px; font-size: 0.68rem;
   color: var(--hint); letter-spacing: 0.3px;
 }
+.expression {
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: right;
+  min-height: 18px;
+  margin-bottom: 2px;
+}
+
+.btn.backspace {
+  font-size: 1.1rem;
+}
