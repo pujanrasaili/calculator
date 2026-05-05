@@ -16,11 +16,11 @@ const sciButtons = [
 ];
 
 const THEMES = ["dark", "light", "neon"];
-const TABS = ["Calculator", "Currency", "Units"];
+const TABS = ["Calc", "Currency", "Units", "Loan"];
 const CURRENCIES = ["USD", "EUR", "GBP", "JPY", "INR", "AUD", "CAD", "CHF", "CNY", "NPR"];
 
 export default function App() {
-  const [tab, setTab] = useState("Calculator");
+  const [tab, setTab] = useState("Calc");
 
   // Calculator state
   const [display, setDisplay] = useState("0");
@@ -46,6 +46,30 @@ export default function App() {
   const [unitAmount, setUnitAmount] = useState("1");
   const [unitFrom, setUnitFrom] = useState("Kilometers");
   const [unitTo, setUnitTo] = useState("Miles");
+
+  // Loan state
+  const [loanAmount, setLoanAmount] = useState("100000");
+  const [loanRate, setLoanRate] = useState("8.5");
+  const [loanTenure, setLoanTenure] = useState("12");
+  const [loanType, setLoanType] = useState("months");
+
+  const calcEMI = () => {
+    const P = parseFloat(loanAmount);
+    const r = parseFloat(loanRate) / 100 / 12;
+    const n = loanType === "years" ? parseFloat(loanTenure) * 12 : parseFloat(loanTenure);
+    if (!P || !r || !n) return null;
+    const emi = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+    const total = emi * n;
+    const interest = total - P;
+    return {
+      emi: emi.toFixed(2),
+      total: total.toFixed(2),
+      interest: interest.toFixed(2),
+      months: n,
+    };
+  };
+
+  const emiResult = calcEMI();
 
   const unitOptions = {
     Length: ["Kilometers", "Miles", "Meters", "Feet", "Inches", "Centimeters"],
@@ -180,7 +204,7 @@ export default function App() {
 
   useEffect(() => {
     const keyMap = { "0":"0","1":"1","2":"2","3":"3","4":"4","5":"5","6":"6","7":"7","8":"8","9":"9",".":".","+":"+","-":"−","*":"×","/":"÷","Enter":"=","Escape":"C","Backspace":"⌫","%":"%" };
-    const handler = (e) => { if (tab === "Calculator" && keyMap[e.key]) handleBtn(keyMap[e.key]); };
+    const handler = (e) => { if (tab === "Calc" && keyMap[e.key]) handleBtn(keyMap[e.key]); };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [display, prev, op, fresh, tab]);
@@ -198,7 +222,7 @@ export default function App() {
           ))}
         </div>
 
-        {tab === "Calculator" && <>
+        {tab === "Calc" && <>
           <div className="display">
             <div className="top-bar">
               <div className="left-controls">
@@ -212,7 +236,6 @@ export default function App() {
             <div className="expression">{expression || " "}</div>
             <div className="number">{display}</div>
           </div>
-
           {showHistory && (
             <div className="history-panel">
               <div className="history-header">
@@ -223,7 +246,6 @@ export default function App() {
                 : <ul className="history-list">{history.map((h, i) => <li key={i} className="history-item">{h}</li>)}</ul>}
             </div>
           )}
-
           {showSci && (
             <div className="sci-panel">
               {sciButtons.map((row, i) => (
@@ -233,7 +255,6 @@ export default function App() {
               ))}
             </div>
           )}
-
           <div className="buttons">
             {basicButtons.map((row, i) => (
               <div key={i} className="row">
@@ -327,6 +348,65 @@ export default function App() {
               <div className="result-equals">=</div>
               <div className="result-to">{convertUnit()} {unitTo}</div>
             </div>
+          </div>
+        )}
+
+        {tab === "Loan" && (
+          <div className="currency-panel">
+            <div className="currency-header">
+              <h2>💰 Loan / EMI Calculator</h2>
+            </div>
+
+            <div className="currency-input-group">
+              <label>Loan Amount</label>
+              <input className="currency-input" type="number" value={loanAmount} onChange={(e) => setLoanAmount(e.target.value)} placeholder="e.g. 100000" />
+            </div>
+
+            <div className="currency-input-group">
+              <label>Annual Interest Rate (%)</label>
+              <input className="currency-input" type="number" value={loanRate} onChange={(e) => setLoanRate(e.target.value)} placeholder="e.g. 8.5" />
+            </div>
+
+            <div className="currency-input-group">
+              <label>Loan Tenure</label>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                <input className="currency-input" type="number" value={loanTenure} onChange={(e) => setLoanTenure(e.target.value)} placeholder="e.g. 12" style={{ flex: 1 }} />
+                <select className="currency-select" value={loanType} onChange={(e) => setLoanType(e.target.value)} style={{ width: "110px" }}>
+                  <option value="months">Months</option>
+                  <option value="years">Years</option>
+                </select>
+              </div>
+            </div>
+
+            {emiResult ? (
+              <div className="emi-results">
+                <div className="emi-card main">
+                  <div className="emi-label">Monthly EMI</div>
+                  <div className="emi-value">{Number(emiResult.emi).toLocaleString()}</div>
+                </div>
+                <div className="emi-row">
+                  <div className="emi-card">
+                    <div className="emi-label">Total Amount</div>
+                    <div className="emi-value sm">{Number(emiResult.total).toLocaleString()}</div>
+                  </div>
+                  <div className="emi-card">
+                    <div className="emi-label">Total Interest</div>
+                    <div className="emi-value sm interest">{Number(emiResult.interest).toLocaleString()}</div>
+                  </div>
+                </div>
+                <div className="emi-bar-wrap">
+                  <div className="emi-bar-label">
+                    <span>Principal</span>
+                    <span>Interest</span>
+                  </div>
+                  <div className="emi-bar">
+                    <div className="emi-bar-principal" style={{ width: `${(parseFloat(loanAmount) / parseFloat(emiResult.total)) * 100}%` }} />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="currency-loading">Fill in all fields to calculate</div>
+            )}
           </div>
         )}
 

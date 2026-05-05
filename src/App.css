@@ -166,3 +166,25 @@ body { min-height: 100vh; font-family: 'Inter', sans-serif; }
 }
 .unit-type-btn:hover { color: var(--text); border-color: var(--op); }
 .unit-type-btn.active { background: var(--op); color: #000; border-color: var(--op); }
+
+/* LOAN / EMI */
+.emi-results { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+
+.emi-card {
+  background: rgba(128,128,128,0.08); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem; text-align: center;
+}
+.emi-card.main { background: rgba(255,159,10,0.1); border-color: var(--op); }
+
+.emi-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4rem; }
+.emi-value { font-size: 1.8rem; font-weight: 700; color: var(--op); }
+.emi-value.sm { font-size: 1.2rem; color: var(--text); }
+.emi-value.interest { color: #e74c3c; }
+
+.emi-row { display: flex; gap: 0.75rem; }
+.emi-row .emi-card { flex: 1; }
+
+.emi-bar-wrap { padding: 0.5rem 0; }
+.emi-bar-label { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); margin-bottom: 0.4rem; }
+.emi-bar { height: 8px; background: #e74c3c; border-radius: 4px; overflow: hidden; }
+.emi-bar-principal { height: 100%; background: var(--op); border-radius: 4px; transition: width 0.5s ease; }
