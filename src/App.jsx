@@ -16,7 +16,7 @@ const sciButtons = [
 ];
 
 const THEMES = ["dark", "light", "neon"];
-const TABS = ["Calc", "Currency", "Units", "Loan"];
+const TABS = ["Calc", "Currency", "Units", "Loan", "BMI"];
 const CURRENCIES = ["USD", "EUR", "GBP", "JPY", "INR", "AUD", "CAD", "CHF", "CNY", "NPR"];
 
 export default function App() {
@@ -53,6 +53,32 @@ export default function App() {
   const [loanTenure, setLoanTenure] = useState("12");
   const [loanType, setLoanType] = useState("months");
 
+  // BMI state
+  const [bmiWeight, setBmiWeight] = useState("");
+  const [bmiHeight, setBmiHeight] = useState("");
+  const [bmiUnit, setBmiUnit] = useState("metric");
+
+  const calcBMI = () => {
+    const w = parseFloat(bmiWeight);
+    const h = parseFloat(bmiHeight);
+    if (!w || !h) return null;
+    let bmi;
+    if (bmiUnit === "metric") {
+      bmi = w / ((h / 100) ** 2);
+    } else {
+      bmi = (703 * w) / (h ** 2);
+    }
+    bmi = parseFloat(bmi.toFixed(1));
+    let category, color, emoji;
+    if (bmi < 18.5) { category = "Underweight"; color = "#00b4d8"; emoji = "😟"; }
+    else if (bmi < 25) { category = "Normal Weight"; color = "#2dc653"; emoji = "😊"; }
+    else if (bmi < 30) { category = "Overweight"; color = "#f4a261"; emoji = "😐"; }
+    else { category = "Obese"; color = "#e74c3c"; emoji = "😟"; }
+    return { bmi, category, color, emoji };
+  };
+
+  const bmiResult = calcBMI();
+
   const calcEMI = () => {
     const P = parseFloat(loanAmount);
     const r = parseFloat(loanRate) / 100 / 12;
@@ -61,12 +87,7 @@ export default function App() {
     const emi = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
     const total = emi * n;
     const interest = total - P;
-    return {
-      emi: emi.toFixed(2),
-      total: total.toFixed(2),
-      interest: interest.toFixed(2),
-      months: n,
-    };
+    return { emi: emi.toFixed(2), total: total.toFixed(2), interest: interest.toFixed(2), months: n };
   };
 
   const emiResult = calcEMI();
@@ -83,56 +104,31 @@ export default function App() {
     if (unitFrom === unitTo) return val.toFixed(4);
     const key = `${unitFrom}-${unitTo}`;
     const c = {
-      "Kilometers-Miles": v => v * 0.621371,
-      "Miles-Kilometers": v => v * 1.60934,
-      "Kilometers-Meters": v => v * 1000,
-      "Meters-Kilometers": v => v / 1000,
-      "Meters-Feet": v => v * 3.28084,
-      "Feet-Meters": v => v / 3.28084,
-      "Feet-Inches": v => v * 12,
-      "Inches-Feet": v => v / 12,
-      "Kilometers-Feet": v => v * 3280.84,
-      "Feet-Kilometers": v => v / 3280.84,
-      "Meters-Inches": v => v * 39.3701,
-      "Inches-Meters": v => v / 39.3701,
-      "Miles-Meters": v => v * 1609.34,
-      "Meters-Miles": v => v / 1609.34,
-      "Miles-Feet": v => v * 5280,
-      "Feet-Miles": v => v / 5280,
-      "Kilometers-Centimeters": v => v * 100000,
-      "Centimeters-Kilometers": v => v / 100000,
-      "Meters-Centimeters": v => v * 100,
-      "Centimeters-Meters": v => v / 100,
-      "Centimeters-Inches": v => v / 2.54,
-      "Inches-Centimeters": v => v * 2.54,
-      "Centimeters-Feet": v => v / 30.48,
-      "Feet-Centimeters": v => v * 30.48,
-      "Miles-Centimeters": v => v * 160934,
-      "Centimeters-Miles": v => v / 160934,
-      "Miles-Inches": v => v * 63360,
-      "Inches-Miles": v => v / 63360,
-      "Kilograms-Pounds": v => v * 2.20462,
-      "Pounds-Kilograms": v => v / 2.20462,
-      "Kilograms-Grams": v => v * 1000,
-      "Grams-Kilograms": v => v / 1000,
-      "Kilograms-Ounces": v => v * 35.274,
-      "Ounces-Kilograms": v => v / 35.274,
-      "Kilograms-Tonnes": v => v / 1000,
-      "Tonnes-Kilograms": v => v * 1000,
-      "Pounds-Grams": v => v * 453.592,
-      "Grams-Pounds": v => v / 453.592,
-      "Pounds-Ounces": v => v * 16,
-      "Ounces-Pounds": v => v / 16,
-      "Grams-Ounces": v => v / 28.3495,
-      "Ounces-Grams": v => v * 28.3495,
-      "Tonnes-Pounds": v => v * 2204.62,
-      "Pounds-Tonnes": v => v / 2204.62,
-      "Celsius-Fahrenheit": v => v * 9/5 + 32,
-      "Fahrenheit-Celsius": v => (v - 32) * 5/9,
-      "Celsius-Kelvin": v => v + 273.15,
-      "Kelvin-Celsius": v => v - 273.15,
-      "Fahrenheit-Kelvin": v => (v - 32) * 5/9 + 273.15,
-      "Kelvin-Fahrenheit": v => (v - 273.15) * 9/5 + 32,
+      "Kilometers-Miles": v => v * 0.621371, "Miles-Kilometers": v => v * 1.60934,
+      "Kilometers-Meters": v => v * 1000, "Meters-Kilometers": v => v / 1000,
+      "Meters-Feet": v => v * 3.28084, "Feet-Meters": v => v / 3.28084,
+      "Feet-Inches": v => v * 12, "Inches-Feet": v => v / 12,
+      "Kilometers-Feet": v => v * 3280.84, "Feet-Kilometers": v => v / 3280.84,
+      "Meters-Inches": v => v * 39.3701, "Inches-Meters": v => v / 39.3701,
+      "Miles-Meters": v => v * 1609.34, "Meters-Miles": v => v / 1609.34,
+      "Miles-Feet": v => v * 5280, "Feet-Miles": v => v / 5280,
+      "Kilometers-Centimeters": v => v * 100000, "Centimeters-Kilometers": v => v / 100000,
+      "Meters-Centimeters": v => v * 100, "Centimeters-Meters": v => v / 100,
+      "Centimeters-Inches": v => v / 2.54, "Inches-Centimeters": v => v * 2.54,
+      "Centimeters-Feet": v => v / 30.48, "Feet-Centimeters": v => v * 30.48,
+      "Miles-Centimeters": v => v * 160934, "Centimeters-Miles": v => v / 160934,
+      "Miles-Inches": v => v * 63360, "Inches-Miles": v => v / 63360,
+      "Kilograms-Pounds": v => v * 2.20462, "Pounds-Kilograms": v => v / 2.20462,
+      "Kilograms-Grams": v => v * 1000, "Grams-Kilograms": v => v / 1000,
+      "Kilograms-Ounces": v => v * 35.274, "Ounces-Kilograms": v => v / 35.274,
+      "Kilograms-Tonnes": v => v / 1000, "Tonnes-Kilograms": v => v * 1000,
+      "Pounds-Grams": v => v * 453.592, "Grams-Pounds": v => v / 453.592,
+      "Pounds-Ounces": v => v * 16, "Ounces-Pounds": v => v / 16,
+      "Grams-Ounces": v => v / 28.3495, "Ounces-Grams": v => v * 28.3495,
+      "Tonnes-Pounds": v => v * 2204.62, "Pounds-Tonnes": v => v / 2204.62,
+      "Celsius-Fahrenheit": v => v * 9/5 + 32, "Fahrenheit-Celsius": v => (v - 32) * 5/9,
+      "Celsius-Kelvin": v => v + 273.15, "Kelvin-Celsius": v => v - 273.15,
+      "Fahrenheit-Kelvin": v => (v - 32) * 5/9 + 273.15, "Kelvin-Fahrenheit": v => (v - 273.15) * 9/5 + 32,
     };
     const fn = c[key];
     return fn ? parseFloat(fn(val).toFixed(4)) : "—";
@@ -356,17 +352,14 @@ export default function App() {
             <div className="currency-header">
               <h2>💰 Loan / EMI Calculator</h2>
             </div>
-
             <div className="currency-input-group">
               <label>Loan Amount</label>
               <input className="currency-input" type="number" value={loanAmount} onChange={(e) => setLoanAmount(e.target.value)} placeholder="e.g. 100000" />
             </div>
-
             <div className="currency-input-group">
               <label>Annual Interest Rate (%)</label>
               <input className="currency-input" type="number" value={loanRate} onChange={(e) => setLoanRate(e.target.value)} placeholder="e.g. 8.5" />
             </div>
-
             <div className="currency-input-group">
               <label>Loan Tenure</label>
               <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -377,7 +370,6 @@ export default function App() {
                 </select>
               </div>
             </div>
-
             {emiResult ? (
               <div className="emi-results">
                 <div className="emi-card main">
@@ -404,8 +396,67 @@ export default function App() {
                   </div>
                 </div>
               </div>
+            ) : <div className="currency-loading">Fill in all fields to calculate</div>}
+          </div>
+        )}
+
+        {tab === "BMI" && (
+          <div className="currency-panel">
+            <div className="currency-header">
+              <h2>🏋️ BMI Calculator</h2>
+            </div>
+
+            <div className="unit-type-row">
+              <button className={`unit-type-btn ${bmiUnit === "metric" ? "active" : ""}`} onClick={() => { setBmiUnit("metric"); setBmiWeight(""); setBmiHeight(""); }}>
+                📐 Metric (kg/cm)
+              </button>
+              <button className={`unit-type-btn ${bmiUnit === "imperial" ? "active" : ""}`} onClick={() => { setBmiUnit("imperial"); setBmiWeight(""); setBmiHeight(""); }}>
+                🇺🇸 Imperial (lb/in)
+              </button>
+            </div>
+
+            <div className="currency-input-group" style={{ marginTop: "1rem" }}>
+              <label>Weight ({bmiUnit === "metric" ? "kg" : "lbs"})</label>
+              <input className="currency-input" type="number" value={bmiWeight} onChange={(e) => setBmiWeight(e.target.value)} placeholder={bmiUnit === "metric" ? "e.g. 70" : "e.g. 154"} />
+            </div>
+
+            <div className="currency-input-group">
+              <label>Height ({bmiUnit === "metric" ? "cm" : "inches"})</label>
+              <input className="currency-input" type="number" value={bmiHeight} onChange={(e) => setBmiHeight(e.target.value)} placeholder={bmiUnit === "metric" ? "e.g. 175" : "e.g. 69"} />
+            </div>
+
+            {bmiResult ? (
+              <div className="bmi-results">
+                <div className="bmi-score-card" style={{ borderColor: bmiResult.color }}>
+                  <div className="bmi-emoji">{bmiResult.emoji}</div>
+                  <div className="bmi-score" style={{ color: bmiResult.color }}>{bmiResult.bmi}</div>
+                  <div className="bmi-category" style={{ color: bmiResult.color }}>{bmiResult.category}</div>
+                </div>
+                <div className="bmi-scale">
+                  <div className="bmi-scale-item" style={{ color: "#00b4d8" }}>
+                    <span>Underweight</span><span>&lt; 18.5</span>
+                  </div>
+                  <div className="bmi-scale-item" style={{ color: "#2dc653" }}>
+                    <span>Normal</span><span>18.5 – 24.9</span>
+                  </div>
+                  <div className="bmi-scale-item" style={{ color: "#f4a261" }}>
+                    <span>Overweight</span><span>25 – 29.9</span>
+                  </div>
+                  <div className="bmi-scale-item" style={{ color: "#e74c3c" }}>
+                    <span>Obese</span><span>≥ 30</span>
+                  </div>
+                </div>
+                <div className="bmi-bar-wrap">
+                  <div className="bmi-bar">
+                    <div className="bmi-bar-fill" style={{
+                      width: `${Math.min((bmiResult.bmi / 40) * 100, 100)}%`,
+                      background: bmiResult.color
+                    }} />
+                  </div>
+                </div>
+              </div>
             ) : (
-              <div className="currency-loading">Fill in all fields to calculate</div>
+              <div className="currency-loading">Enter weight & height to calculate</div>
             )}
           </div>
         )}
