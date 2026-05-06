@@ -1,25 +1,50 @@
 # 🧮 Calculator
 
-A sleek, feature-rich calculator app built with React + Vite.
+A feature-rich, multi-tab calculator app built with React + Vite.
 
 ## ✨ Features
 
-- ✅ Basic arithmetic — add, subtract, multiply, divide
+### 🧮 Calculator
+- Basic arithmetic — add, subtract, multiply, divide
 - 🔬 Scientific mode — sin, cos, tan, log, ln, √, x², xʸ, π, e
-- 🎨 3 Themes — Dark, Light, and Neon
-- ⏱ Calculation History — see your last 20 calculations
-- ⌨️ Keyboard Support — type numbers and operators directly
-- 📱 Clean responsive UI inspired by iOS calculator
+- 🎨 3 Themes — Dark, Light, Neon
+- ⏱ Calculation history — last 20 calculations
+- ⌨️ Full keyboard support + backspace
+- Expression display while typing
+
+### 💱 Currency Converter
+- Live exchange rates from the internet
+- 10 major currencies including NPR
+- Swap button to reverse conversion
+- Auto-refresh rates
+
+### 📏 Unit Converter
+- 📐 Length — km, miles, meters, feet, inches, cm
+- ⚖️ Weight — kg, pounds, grams, ounces, tonnes
+- 🌡️ Temperature — Celsius, Fahrenheit, Kelvin
+
+### 💰 Loan / EMI Calculator
+- Calculate monthly EMI instantly
+- Shows total amount & total interest
+- Visual principal vs interest bar
+- Supports months & years tenure
+
+### 🏋️ BMI Calculator
+- Metric (kg/cm) & Imperial (lb/in) support
+- Color-coded BMI categories
+- Visual BMI scale & progress bar
+- Underweight / Normal / Overweight / Obese
+
+## 🚀 Live Demo
+
+👉 [calculator-five-omega-98.vercel.app](https://calculator-five-omega-98.vercel.app)
 
 ## 🛠 Tech Stack
 
 - [React](https://react.dev/) — UI library
 - [Vite](https://vitejs.dev/) — lightning-fast bundler
-- CSS Variables — for seamless theme switching
-
-## 🚀 Live Demo
-
-👉 [calculator-five-omega-98.vercel.app](https://calculator-five-omega-98.vercel.app)
+- CSS Variables — seamless theme switching
+- Exchange Rate API — live currency rates
 
 ## 📦 Getting Started
 
@@ -33,17 +58,6 @@ npm run dev
 # Build for production
 npm run build
 ```
-
-## ⌨️ Keyboard Shortcuts
-
-| Key | Action |
-|-----|--------|
-| 0-9 | Numbers |
-| + - * / | Operators |
-| Enter | Equals |
-| Escape | Clear |
-| . | Decimal |
-| % | Percentage |
 
 ## 📁 Project Structure
 calculator/
