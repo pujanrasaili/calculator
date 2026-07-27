@@ -71,3 +71,6 @@ calculator/
 ## 📄 License
 
 MIT
+
+## 👨‍💻 Author
+**Pujan Rasaili**
